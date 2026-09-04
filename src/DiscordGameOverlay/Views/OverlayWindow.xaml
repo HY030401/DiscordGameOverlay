@@ -11,68 +11,32 @@
         ShowInTaskbar="False">
 
     <Border Background="#88000000"
-            CornerRadius="10">
+            CornerRadius="10"
+            Padding="12">
 
-        <Grid>
+        <ItemsControl ItemsSource="{Binding Messages}">
 
-            <!-- 弹幕区域 -->
-            <ItemsControl Margin="12,40,12,12"
-                          ItemsSource="{Binding Messages}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
+                    <TextBlock Margin="0,0,0,8"
+                               FontSize="18"
+                               Foreground="White"
+                               TextWrapping="Wrap">
 
-                        <TextBlock Margin="0,0,0,8"
-                                   FontSize="18"
-                                   Foreground="White"
-                                   TextWrapping="Wrap">
+                        <Run Text="{Binding DisplayName}"
+                             FontWeight="Bold"/>
 
-                            <Run Text="{Binding DisplayName}"
-                                 FontWeight="Bold"/>
+                        <Run Text=": "/>
 
-                            <Run Text=": "/>
+                        <Run Text="{Binding Content}"/>
 
-                            <Run Text="{Binding Content}"/>
+                    </TextBlock>
 
-                        </TextBlock>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
 
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-
-            </ItemsControl>
-
-            <!-- 左上角：唯一可以拖动的位置 -->
-            <Border x:Name="DragArea"
-                    Width="40"
-                    Height="30"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Margin="5"
-                    Background="#AA444444"
-                    CornerRadius="5"
-                    MouseLeftButtonDown="DragArea_MouseLeftButtonDown">
-
-                <TextBlock Text="⋮⋮"
-                           Foreground="White"
-                           FontSize="16"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
-
-            </Border>
-
-            <!-- 右上角：关闭整个程序 -->
-            <Button x:Name="CloseButton"
-                    Content="×"
-                    Width="30"
-                    Height="30"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Margin="5"
-                    FontSize="18"
-                    Click="CloseButton_Click"/>
-
-        </Grid>
+        </ItemsControl>
 
     </Border>
-
 </Window>
