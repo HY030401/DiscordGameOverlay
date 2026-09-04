@@ -1,0 +1,6 @@
+# Local secrets
+config.json
+
+# .NET build outputs
+**/bin/
+**/obj/
