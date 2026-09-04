@@ -7,6 +7,9 @@ namespace DiscordGameOverlay.Views
         public MainWindow()
         {
             InitializeComponent();
+
+            OverlayWindow overlayWindow = new OverlayWindow();
+            overlayWindow.Show();
         }
     }
 }

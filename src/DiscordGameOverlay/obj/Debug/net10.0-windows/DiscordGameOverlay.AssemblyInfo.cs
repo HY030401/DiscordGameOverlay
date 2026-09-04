@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DiscordGameOverlay")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fb3392d469b730bff1fc952299094e657b3f5929")]
 [assembly: System.Reflection.AssemblyProductAttribute("DiscordGameOverlay")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DiscordGameOverlay")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
