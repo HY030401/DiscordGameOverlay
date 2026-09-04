@@ -1,0 +1,13 @@
+# .NET build output
+bin/
+obj/
+
+# VS Code
+.vscode/
+
+# User-specific files
+*.user
+*.suo
+
+# Local configuration / secrets
+config.json
