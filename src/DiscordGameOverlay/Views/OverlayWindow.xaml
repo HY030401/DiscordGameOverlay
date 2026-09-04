@@ -1,15 +1,34 @@
 <Window x:Class="DiscordGameOverlay.Views.OverlayWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Overlay Window"
-        Height="200"
-        Width="400">
+        Title="Overlay"
+        Width="350"
+        Height="180"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False">
 
-    <Grid>
-        <TextBlock
-            Text="Overlay Window"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"/>
-    </Grid>
+    <Border Background="#88000000"
+            CornerRadius="10"
+            Padding="12">
 
+        <StackPanel>
+            <TextBlock Text="TestUser: Hello!"
+                       Foreground="White"
+                       FontSize="18"
+                       Margin="0,0,0,8"/>
+
+            <TextBlock Text="Alice: Nice shot!"
+                       Foreground="White"
+                       FontSize="18"
+                       Margin="0,0,0,8"/>
+
+            <TextBlock Text="Bob: Behind you!"
+                       Foreground="White"
+                       FontSize="18"/>
+        </StackPanel>
+
+    </Border>
 </Window>
