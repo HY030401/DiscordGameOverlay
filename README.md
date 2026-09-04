@@ -1,2 +1,0 @@
-# DiscordGameOverlay
-hellow word
