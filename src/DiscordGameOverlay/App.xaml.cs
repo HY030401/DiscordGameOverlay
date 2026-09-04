@@ -1,4 +1,6 @@
+using System;
 using System.Windows;
+using DiscordGameOverlay.Config;
 using DiscordGameOverlay.Models;
 using DiscordGameOverlay.Services;
 using DiscordGameOverlay.Views;
@@ -7,34 +9,71 @@ namespace DiscordGameOverlay
 {
     public partial class App : Application
     {
+        private DiscordService? _discordService;
+        private MessageManager? _messageManager;
+
         public StreamWindow? StreamWindow { get; private set; }
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            MessageManager messageManager = new MessageManager();
-
-            messageManager.AddMessage(new ChatMessage
+            try
             {
-                DisplayName = "Alice",
-                Content = "Hello!"
-            });
+                // 1. Read configuration
+                AppConfig config = AppConfig.Load();
 
-            messageManager.AddMessage(new ChatMessage
+                // 2. Create the shared message manager
+                _messageManager = new MessageManager();
+
+                // 3. Create Discord service
+                _discordService = new DiscordService(
+                    config.DiscordBotToken,
+                    config.DiscordChannelId
+                );
+
+                // 4. Listen for new Discord messages
+                _discordService.MessageReceived += OnDiscordMessageReceived;
+
+                // 5. Start Discord bot
+                await _discordService.StartAsync();
+
+                // 6. Create streamer overlay
+                OverlayWindow overlayWindow =
+                    new OverlayWindow(_messageManager);
+
+                // 7. Create viewer stream window
+                StreamWindow =
+                    new StreamWindow();
+
+                // 8. Show both windows
+                overlayWindow.Show();
+                StreamWindow.Show();
+            }
+            catch (Exception ex)
             {
-                DisplayName = "Bob",
-                Content = "Nice shot!"
+                MessageBox.Show(
+                    ex.Message,
+                    "启动失败",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+
+                Shutdown();
+            }
+        }
+
+        private void OnDiscordMessageReceived(ChatMessage message)
+        {
+            if (_messageManager == null)
+                return;
+
+            // Discord events may arrive on a background thread.
+            // WPF UI collections should be updated on the UI thread.
+            Dispatcher.BeginInvoke(() =>
+            {
+                _messageManager.AddMessage(message);
             });
-
-            OverlayWindow overlayWindow =
-                new OverlayWindow(messageManager);
-
-            StreamWindow =
-                new StreamWindow();
-
-            overlayWindow.Show();
-            StreamWindow.Show();
         }
 
         public void ExitApplication()
@@ -42,6 +81,18 @@ namespace DiscordGameOverlay
             StreamWindow?.AllowClose();
 
             Shutdown();
+        }
+
+        protected override async void OnExit(ExitEventArgs e)
+        {
+            if (_discordService != null)
+            {
+                _discordService.MessageReceived -= OnDiscordMessageReceived;
+
+                await _discordService.StopAsync();
+            }
+
+            base.OnExit(e);
         }
     }
 }
