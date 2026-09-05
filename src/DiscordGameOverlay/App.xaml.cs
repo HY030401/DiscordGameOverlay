@@ -42,12 +42,14 @@ namespace DiscordGameOverlay
                 OverlayWindow overlayWindow =
                     new OverlayWindow(_messageManager);
 
-                OverlayControlWindow controlWindow =
-                    new OverlayControlWindow(overlayWindow);
-
                 // 7. Create viewer stream window
                 StreamWindow =
-                    new StreamWindow();
+                    new StreamWindow(_messageManager);
+
+                OverlayControlWindow controlWindow =
+                    new OverlayControlWindow(
+                        overlayWindow,
+                        StreamWindow);
 
                 // 8. Show windows
                 overlayWindow.Show();
