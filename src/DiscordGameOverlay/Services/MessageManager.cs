@@ -10,8 +10,19 @@ namespace DiscordGameOverlay.Services
 
         public int MaxMessages { get; set; } = 5;
 
+        public int MaxMessageLength { get; set; } = 60;
+
         public void AddMessage(ChatMessage message)
         {
+            if (message.Content.Length > MaxMessageLength)
+            {
+                message.Content =
+                    message.Content.Substring(
+                        0,
+                        MaxMessageLength
+                    ) + "...";
+            }
+
             Messages.Add(message);
 
             while (Messages.Count > MaxMessages)

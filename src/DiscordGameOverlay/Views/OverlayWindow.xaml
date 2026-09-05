@@ -14,29 +14,35 @@
             CornerRadius="10"
             Padding="12">
 
-        <ItemsControl ItemsSource="{Binding Messages}">
+        <ScrollViewer x:Name="MessageScrollViewer"
+                      VerticalScrollBarVisibility="Hidden"
+                      HorizontalScrollBarVisibility="Disabled">
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
+            <ItemsControl ItemsSource="{Binding Messages}">
 
-                    <TextBlock Margin="0,0,0,8"
-                               FontSize="18"
-                               Foreground="White"
-                               TextWrapping="Wrap">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
 
-                        <Run Text="{Binding DisplayName}"
-                             FontWeight="Bold"/>
+                        <TextBlock Margin="0,0,0,6"
+                                   FontSize="14"
+                                   Foreground="White"
+                                   TextWrapping="Wrap">
 
-                        <Run Text=": "/>
+                            <Run Text="{Binding DisplayName}"
+                                 FontWeight="Bold"/>
 
-                        <Run Text="{Binding Content}"/>
+                            <Run Text=": "/>
 
-                    </TextBlock>
+                            <Run Text="{Binding Content}"/>
 
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
+                        </TextBlock>
 
-        </ItemsControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+
+        </ScrollViewer>
 
     </Border>
 </Window>
