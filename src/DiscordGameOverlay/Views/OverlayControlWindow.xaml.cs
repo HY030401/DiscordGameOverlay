@@ -94,6 +94,30 @@ namespace DiscordGameOverlay.Views
             streamWindow.StopGameCapture();
         }
 
+        private void SettingsButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            SettingsWindow settingsWindow =
+                new SettingsWindow();
+
+            settingsWindow.Owner = this;
+
+            bool? result =
+                settingsWindow.ShowDialog();
+
+            if (result == true)
+            {
+                MessageBox.Show(
+                    this,
+                    "Discord 设置已保存。\n请重新启动应用程序使新设置生效。",
+                    "设置已保存",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
+            }
+        }
+
         private void StreamWindow_CaptureStatusChanged(string status)
         {
             CaptureStatusText.Text = status;
