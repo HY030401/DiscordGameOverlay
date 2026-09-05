@@ -20,38 +20,61 @@ namespace DiscordGameOverlay
 
             try
             {
-                // 1. Read configuration
-                AppConfig config = AppConfig.Load();
+                // 1. 如果没有配置文件，
+                //    先显示第一次启动设置窗口
+                if (!AppConfig.Exists())
+                {
+                    SettingsWindow settingsWindow =
+                        new SettingsWindow();
 
-                // 2. Create the shared message manager
-                _messageManager = new MessageManager();
+                    bool? result =
+                        settingsWindow.ShowDialog();
 
-                // 3. Create Discord service
-                _discordService = new DiscordService(
-                    config.DiscordBotToken,
-                    config.DiscordChannelId
-                );
+                    // 用户没有完成配置，程序直接退出
+                    if (result != true)
+                    {
+                        Shutdown();
+                        return;
+                    }
+                }
 
-                // 4. Listen for new Discord messages
-                _discordService.MessageReceived += OnDiscordMessageReceived;
+                // 2. 配置存在后才读取
+                AppConfig config =
+                    AppConfig.Load();
 
-                // 5. Start Discord bot
+                // 3. Create the shared message manager
+                _messageManager =
+                    new MessageManager();
+
+                // 4. Create Discord service
+                _discordService =
+                    new DiscordService(
+                        config.DiscordBotToken,
+                        config.DiscordChannelId
+                    );
+
+                // 5. Listen for new Discord messages
+                _discordService.MessageReceived +=
+                    OnDiscordMessageReceived;
+
+                // 6. Start Discord bot
                 await _discordService.StartAsync();
 
-                // 6. Create streamer overlay
+                // 7. Create streamer overlay
                 OverlayWindow overlayWindow =
                     new OverlayWindow(_messageManager);
 
-                // 7. Create viewer stream window
+                // 8. Create viewer stream window
                 StreamWindow =
                     new StreamWindow(_messageManager);
 
                 OverlayControlWindow controlWindow =
                     new OverlayControlWindow(
                         overlayWindow,
-                        StreamWindow);
+                        StreamWindow
+                    );
 
-                // 8. Show windows
+                // 9. Show application windows
                 overlayWindow.Show();
                 controlWindow.Show();
                 StreamWindow.Show();
