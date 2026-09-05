@@ -18,6 +18,20 @@ namespace DiscordGameOverlay.Services
         public IntPtr TexturePointer { get; }
     }
 
+    public sealed class GameCaptureStartedEventArgs : EventArgs
+    {
+        public GameCaptureStartedEventArgs(
+            string sourceName,
+            WindowProcessTarget? audioTarget)
+        {
+            SourceName = sourceName;
+            AudioTarget = audioTarget;
+        }
+
+        public string SourceName { get; }
+        public WindowProcessTarget? AudioTarget { get; }
+    }
+
     public sealed class GameCaptureService : IDisposable
     {
         private const int TargetFramesPerSecond = 30;
@@ -40,7 +54,7 @@ namespace DiscordGameOverlay.Services
         private bool isDisposed;
 
         public event EventHandler<GameCaptureFrameEventArgs>? FrameArrived;
-        public event Action<string>? CaptureStarted;
+        public event EventHandler<GameCaptureStartedEventArgs>? CaptureStarted;
         public event Action? CaptureStopped;
         public event Action<string>? CaptureFailed;
 
@@ -112,7 +126,15 @@ namespace DiscordGameOverlay.Services
 
                 lastFrameTimestamp = 0;
                 hasReportedFrameFailure = 0;
-                CaptureStarted?.Invoke(item.DisplayName);
+
+                WindowProcessTarget? audioTarget =
+                    WindowProcessResolver.TryResolve(item.DisplayName);
+
+                CaptureStarted?.Invoke(
+                    this,
+                    new GameCaptureStartedEventArgs(
+                        item.DisplayName,
+                        audioTarget));
             }
             catch
             {

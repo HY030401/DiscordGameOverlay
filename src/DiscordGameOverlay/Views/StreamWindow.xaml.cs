@@ -21,12 +21,14 @@ namespace DiscordGameOverlay.Views
         private const int MaxPendingMessages = 100;
 
         private readonly MessageManager messageManager;
+        private readonly ProcessAudioRelayService audioRelayService;
         private readonly Queue<ChatMessage> pendingMessages = new();
         private readonly DispatcherTimer danmakuTimer;
         private readonly List<DateTimeOffset> laneReadyTimes = new();
 
         private GpuFramePresenter? gpuFramePresenter;
         private GameCaptureService? gameCaptureService;
+        private int captureGeneration;
         private bool allowClose;
 
         public event Action<string>? CaptureStatusChanged;
@@ -36,6 +38,8 @@ namespace DiscordGameOverlay.Views
             InitializeComponent();
 
             messageManager = manager;
+            audioRelayService = new ProcessAudioRelayService();
+            audioRelayService.RelayFailed += AudioRelayService_RelayFailed;
 
             foreach (ChatMessage message in messageManager.Messages)
             {
@@ -66,6 +70,10 @@ namespace DiscordGameOverlay.Views
             danmakuTimer.Tick -= DanmakuTimer_Tick;
             messageManager.Messages.CollectionChanged -= Messages_CollectionChanged;
 
+            Interlocked.Increment(ref captureGeneration);
+            audioRelayService.RelayFailed -= AudioRelayService_RelayFailed;
+            audioRelayService.Dispose();
+
             if (gameCaptureService != null)
             {
                 gameCaptureService.FrameArrived -= GameCaptureService_FrameArrived;
@@ -81,14 +89,28 @@ namespace DiscordGameOverlay.Views
             gpuFramePresenter = null;
         }
 
-        public Task<bool> SelectCaptureSourceAsync(IntPtr ownerWindowHandle)
+        public async Task<bool> SelectCaptureSourceAsync(
+            IntPtr ownerWindowHandle)
         {
             InitializeGpuCapture();
-            return gameCaptureService!.SelectAndStartAsync(ownerWindowHandle);
+
+            try
+            {
+                return await gameCaptureService!
+                    .SelectAndStartAsync(ownerWindowHandle);
+            }
+            catch
+            {
+                Interlocked.Increment(ref captureGeneration);
+                audioRelayService.Stop();
+                throw;
+            }
         }
 
         public void StopGameCapture()
         {
+            Interlocked.Increment(ref captureGeneration);
+            audioRelayService.Stop();
             gameCaptureService?.StopCapture();
         }
 
@@ -131,14 +153,67 @@ namespace DiscordGameOverlay.Views
             }
         }
 
-        private void GameCaptureService_CaptureStarted(string sourceName)
+        private void GameCaptureService_CaptureStarted(
+            object? sender,
+            GameCaptureStartedEventArgs e)
         {
+            int generation = Interlocked.Increment(
+                ref captureGeneration);
+
+            audioRelayService.Stop();
+
             RunOnUiThread(() =>
-                CaptureStatusChanged?.Invoke($"正在采集：{sourceName}"));
+            {
+                CaptureStatusChanged?.Invoke(
+                    $"正在连接画面和音频：{e.SourceName}");
+
+                _ = StartSelectedWindowAudioAsync(e, generation);
+            });
+        }
+
+        private async Task StartSelectedWindowAudioAsync(
+            GameCaptureStartedEventArgs source,
+            int generation)
+        {
+            if (source.AudioTarget == null)
+            {
+                CaptureStatusChanged?.Invoke(
+                    $"正在采集画面（未识别窗口音频）：{source.SourceName}");
+                return;
+            }
+
+            try
+            {
+                bool started = await audioRelayService.StartAsync(
+                    source.AudioTarget.ProcessId);
+
+                if (!started ||
+                    generation != Volatile.Read(ref captureGeneration) ||
+                    gameCaptureService?.IsCapturing != true)
+                {
+                    return;
+                }
+
+                CaptureStatusChanged?.Invoke(
+                    audioRelayService.UsesDefaultOutputDevice
+                        ? $"画面和音频直播中（本机可能双声）：{source.SourceName}"
+                        : $"画面和音频直播中（已防双声）：{source.SourceName}");
+            }
+            catch (Exception ex)
+            {
+                if (generation != Volatile.Read(ref captureGeneration))
+                    return;
+
+                CaptureStatusChanged?.Invoke(
+                    $"画面正常，窗口音频启动失败：{ex.Message}");
+            }
         }
 
         private void GameCaptureService_CaptureStopped()
         {
+            Interlocked.Increment(ref captureGeneration);
+            audioRelayService.Stop();
+
             RunOnUiThread(() =>
             {
                 ResetGamePreview();
@@ -147,6 +222,12 @@ namespace DiscordGameOverlay.Views
         }
 
         private void GameCaptureService_CaptureFailed(string message)
+        {
+            RunOnUiThread(() =>
+                CaptureStatusChanged?.Invoke(message));
+        }
+
+        private void AudioRelayService_RelayFailed(string message)
         {
             RunOnUiThread(() =>
                 CaptureStatusChanged?.Invoke(message));
