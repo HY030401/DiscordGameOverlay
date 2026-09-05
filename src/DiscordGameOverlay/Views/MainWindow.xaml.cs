@@ -39,7 +39,7 @@ namespace DiscordGameOverlay.Views
             overlayWindow = new OverlayWindow(messageManager);
             overlayWindow.Show();
 
-            streamWindow = new StreamWindow();
+            streamWindow = new StreamWindow(messageManager);
             streamWindow.Show();
         }
 
@@ -62,7 +62,7 @@ namespace DiscordGameOverlay.Views
         {
             if (streamWindow == null)
             {
-                streamWindow = new StreamWindow();
+                streamWindow = new StreamWindow(messageManager);
             }
 
             streamWindow.Show();
