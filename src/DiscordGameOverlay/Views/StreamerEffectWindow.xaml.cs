@@ -2,16 +2,19 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using DiscordGameOverlay.Models;
 using DiscordGameOverlay.Services;
 
 namespace DiscordGameOverlay.Views
 {
-    public partial class StreamerEffectWindow : Window
+    public partial class StreamerEffectWindow : Window, IOverlayEffectHost
     {
         private const int GWL_EXSTYLE = -20;
 
         private const int WS_EX_TRANSPARENT = 0x00000020;
         private const int WS_EX_NOACTIVATE = 0x08000000;
+
+        private readonly OverlayEffectManager overlayEffectManager;
 
         [DllImport("user32.dll")]
         private static extern int GetWindowLong(
@@ -28,7 +31,26 @@ namespace DiscordGameOverlay.Views
         {
             InitializeComponent();
 
+            overlayEffectManager =
+                new OverlayEffectManager(EffectCanvas);
+
             Loaded += StreamerEffectWindow_Loaded;
+        }
+
+        public void PlayEffect(OverlayEffectRequest request)
+        {
+            if (Dispatcher.CheckAccess())
+            {
+                overlayEffectManager.Play(request);
+                return;
+            }
+
+            if (!Dispatcher.HasShutdownStarted &&
+                !Dispatcher.HasShutdownFinished)
+            {
+                Dispatcher.BeginInvoke(
+                    () => overlayEffectManager.Play(request));
+            }
         }
 
         private void StreamerEffectWindow_Loaded(

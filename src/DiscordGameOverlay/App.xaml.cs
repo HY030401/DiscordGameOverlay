@@ -89,6 +89,8 @@ namespace DiscordGameOverlay
                 StreamerEffectWindow =
                     new StreamerEffectWindow();
 
+                RegisterEffectHost(StreamerEffectWindow);
+
                 OverlayControlWindow controlWindow =
                     new OverlayControlWindow(
                         overlayWindow,
