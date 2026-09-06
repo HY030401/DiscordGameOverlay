@@ -69,6 +69,9 @@ namespace DiscordGameOverlay.Views
                 extendedStyle | WS_EX_TRANSPARENT
             );
 
+            // Prevent this overlay from appearing in capture.
+            WindowCaptureProtection.ExcludeFromCapture(this);
+
             // Start at the newest message.
             messageScrollViewer?.ScrollToEnd();
         }

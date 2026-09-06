@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using DiscordGameOverlay.Services;
 
 namespace DiscordGameOverlay.Views
 {
@@ -32,6 +33,9 @@ namespace DiscordGameOverlay.Views
             // 放在 OverlayWindow 正上方
             Left = overlayWindow.Left;
             Top = overlayWindow.Top - Height;
+
+            // Prevent this control window from appearing in capture.
+            WindowCaptureProtection.ExcludeFromCapture(this);
         }
 
         private void OverlayControlWindow_LocationChanged(

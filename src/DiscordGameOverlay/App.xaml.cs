@@ -17,6 +17,8 @@ namespace DiscordGameOverlay
 
         public StreamWindow? StreamWindow { get; private set; }
 
+        public StreamerEffectWindow? StreamerEffectWindow { get; private set; }
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -83,14 +85,19 @@ namespace DiscordGameOverlay
 
                 RegisterEffectHost(StreamWindow);
 
+                // 9. Create streamer effect window
+                StreamerEffectWindow =
+                    new StreamerEffectWindow();
+
                 OverlayControlWindow controlWindow =
                     new OverlayControlWindow(
                         overlayWindow,
                         StreamWindow
                     );
 
-                // 9. Show application windows
+                // 10. Show application windows
                 overlayWindow.Show();
+                StreamerEffectWindow.Show();
                 controlWindow.Show();
                 StreamWindow.Show();
             }
