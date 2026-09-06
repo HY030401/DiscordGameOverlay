@@ -130,3 +130,64 @@ Bot 至少需要以下权限：
 - Message Content Intent 是否已经开启
 - Bot 是否拥有目标频道的查看权限
 - Channel ID 是否填写正确
+
+---
+
+## 自定义互动表情
+
+程序只响应配置过的服务器自定义表情，不会响应 Discord 内置的
+`💩`、`❤️` 或 `🥚`。
+
+### 1. 上传表情
+
+在 Discord 的服务器设置中进入 **表情 / Emoji**，上传：
+
+- `src/DiscordGameOverlay/Assets/DiscordEmojis/throw_poop.png`
+- `src/DiscordGameOverlay/Assets/DiscordEmojis/pigeon_poop.png`
+- `src/DiscordGameOverlay/Assets/DiscordEmojis/heart_arrow.png`
+- `src/DiscordGameOverlay/Assets/DiscordEmojis/throw_egg.png`
+
+建议分别命名为：
+
+- `throw_poop` — `1546008982026584094`
+- `pigeon_poop` — 上传后使用 Discord 分配的新 ID
+- `heart_arrow` — `1546009038943424522`
+- `throw_egg` — `1546009077107269794`
+
+### 2. 获取表情 ID
+
+在 Discord 消息框中先输入反斜杠，再选择自定义表情。例如：
+
+`\:heart_arrow:`
+
+发送后 Discord 会显示类似：
+
+`<:heart_arrow:123456789012345678>`
+
+最后一段数字就是需要填写的表情 ID。
+
+### 3. 填写设置
+
+打开程序的设置窗口，分别填写：
+
+- 扔屎自定义表情 ID
+- 鸽子屎自定义表情 ID
+- 爱心中箭自定义表情 ID
+- 扔鸡蛋自定义表情 ID
+
+保存并重新启动程序。之后发送这些自定义表情，或把它们作为消息反应，
+即可触发对应特效。
+
+其中扔屎与扔鸡蛋共用迎面投掷轨迹；鸽子屎从窗口上方落下，
+落到底部后摊开并在约 2 秒后淡出。
+
+### 4. 聚合、强度与冷却
+
+每一种特效独立使用同一套规则：
+
+- 第一枚非冷却状态的表情会开启 3 秒计数窗口。
+- 3 秒结束时，1～5 枚触发一级强度并播放 1 个实例。
+- 6～10 枚触发二级强度并播放 3 个实例。
+- 11 枚及以上触发三级强度并播放 5 个实例。
+- 动画批次生成后进入 20 秒冷却；冷却期间的对应表情不触发动画。
+- 被识别为动画触发的消息不会进入主播或观众弹幕画面。

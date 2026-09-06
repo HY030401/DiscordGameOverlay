@@ -4,7 +4,7 @@
         Title="Discord Game Overlay - Setup"
         Icon="/DiscordGameOverlay;component/Assets/AppIcon.ico"
         Width="450"
-        Height="360"
+        Height="625"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
 
@@ -42,10 +42,34 @@
             <TextBox x:Name="ChannelIdBox"
                      Height="32"/>
 
+            <TextBlock Text="扔屎自定义表情 ID"
+                       Margin="0,12,0,5"/>
+
+            <TextBox x:Name="PoopEmojiIdBox"
+                     Height="32"/>
+
+            <TextBlock Text="鸽子屎自定义表情 ID"
+                       Margin="0,12,0,5"/>
+
+            <TextBox x:Name="PigeonPoopEmojiIdBox"
+                     Height="32"/>
+
+            <TextBlock Text="爱心中箭自定义表情 ID"
+                       Margin="0,12,0,5"/>
+
+            <TextBox x:Name="HeartEmojiIdBox"
+                     Height="32"/>
+
+            <TextBlock Text="扔鸡蛋自定义表情 ID"
+                       Margin="0,12,0,5"/>
+
+            <TextBox x:Name="EggEmojiIdBox"
+                     Height="32"/>
+
         </StackPanel>
 
         <TextBlock Grid.Row="4"
-                   Text="This configuration is stored only on this computer."
+                   Text="表情 ID 可留空以禁用对应特效；配置只保存在本机。"
                    Foreground="Gray"
                    TextWrapping="Wrap"
                    Margin="0,15,0,15"/>

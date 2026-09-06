@@ -31,6 +31,18 @@ namespace DiscordGameOverlay.Views
 
                 ChannelIdBox.Text =
                     config.DiscordChannelId.ToString();
+
+                PoopEmojiIdBox.Text =
+                    FormatOptionalId(config.PoopEmojiId);
+
+                PigeonPoopEmojiIdBox.Text =
+                    FormatOptionalId(config.PigeonPoopEmojiId);
+
+                HeartEmojiIdBox.Text =
+                    FormatOptionalId(config.HeartEmojiId);
+
+                EggEmojiIdBox.Text =
+                    FormatOptionalId(config.EggEmojiId);
             }
             catch
             {
@@ -75,11 +87,35 @@ namespace DiscordGameOverlay.Views
                 return;
             }
 
+            if (!TryReadOptionalId(
+                    PoopEmojiIdBox.Text,
+                    "扔屎表情 ID",
+                    out ulong poopEmojiId) ||
+                !TryReadOptionalId(
+                    PigeonPoopEmojiIdBox.Text,
+                    "鸽子屎表情 ID",
+                    out ulong pigeonPoopEmojiId) ||
+                !TryReadOptionalId(
+                    HeartEmojiIdBox.Text,
+                    "爱心中箭表情 ID",
+                    out ulong heartEmojiId) ||
+                !TryReadOptionalId(
+                    EggEmojiIdBox.Text,
+                    "扔鸡蛋表情 ID",
+                    out ulong eggEmojiId))
+            {
+                return;
+            }
+
             AppConfig config =
                 new AppConfig
                 {
                     DiscordBotToken = token,
-                    DiscordChannelId = channelId
+                    DiscordChannelId = channelId,
+                    PoopEmojiId = poopEmojiId,
+                    PigeonPoopEmojiId = pigeonPoopEmojiId,
+                    HeartEmojiId = heartEmojiId,
+                    EggEmojiId = eggEmojiId
                 };
 
             try
@@ -98,6 +134,37 @@ namespace DiscordGameOverlay.Views
                     MessageBoxImage.Error
                 );
             }
+        }
+
+        private static string FormatOptionalId(ulong value)
+        {
+            return value == 0 ? "" : value.ToString();
+        }
+
+        private bool TryReadOptionalId(
+            string text,
+            string displayName,
+            out ulong value)
+        {
+            string trimmed = text.Trim();
+            if (trimmed.Length == 0)
+            {
+                value = 0;
+                return true;
+            }
+
+            if (ulong.TryParse(trimmed, out value) && value != 0)
+            {
+                return true;
+            }
+
+            MessageBox.Show(
+                $"请输入有效的 {displayName}，或留空禁用。",
+                "表情 ID 无效",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+
+            return false;
         }
     }
 }

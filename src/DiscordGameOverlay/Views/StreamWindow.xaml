@@ -37,6 +37,13 @@
                 Background="Transparent"
                 ClipToBounds="True"
                 IsHitTestVisible="False"/>
+
+        <!-- Discord 表情触发的互动动画。 -->
+        <Canvas x:Name="EffectCanvas"
+                Panel.ZIndex="20"
+                Background="Transparent"
+                ClipToBounds="True"
+                IsHitTestVisible="False"/>
     </Grid>
 
 </Window>

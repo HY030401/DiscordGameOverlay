@@ -14,6 +14,9 @@
     <None Remove="Assets\AppIcon.ico" />
     <Resource Include="Assets\AppIcon.ico" />
 
+    <None Remove="Assets\Effects\*.png" />
+    <Resource Include="Assets\Effects\*.png" />
+
     <None Update="config.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>

@@ -1,4 +1,8 @@
 {
   "DiscordBotToken": "PUT_YOUR_BOT_TOKEN_HERE",
-  "DiscordChannelId": 123456789012345678
+  "DiscordChannelId": 123456789012345678,
+  "PoopEmojiId": 1546008982026584094,
+  "PigeonPoopEmojiId": 0,
+  "HeartEmojiId": 1546009038943424522,
+  "EggEmojiId": 1546009077107269794
 }

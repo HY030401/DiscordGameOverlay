@@ -11,6 +11,9 @@ namespace DiscordGameOverlay
     {
         private DiscordService? _discordService;
         private MessageManager? _messageManager;
+        private readonly List<IOverlayEffectHost> _effectHosts = new();
+        private readonly EffectTriggerCoordinator _effectTriggerCoordinator =
+            new();
 
         public StreamWindow? StreamWindow { get; private set; }
 
@@ -50,12 +53,22 @@ namespace DiscordGameOverlay
                 _discordService =
                     new DiscordService(
                         config.DiscordBotToken,
-                        config.DiscordChannelId
+                        config.DiscordChannelId,
+                        config.PoopEmojiId,
+                        config.PigeonPoopEmojiId,
+                        config.HeartEmojiId,
+                        config.EggEmojiId
                     );
 
                 // 5. Listen for new Discord messages
                 _discordService.MessageReceived +=
                     OnDiscordMessageReceived;
+
+                _discordService.EffectRequested +=
+                    OnDiscordEffectRequested;
+
+                _effectTriggerCoordinator.EffectReady +=
+                    OnEffectReady;
 
                 // 6. Start Discord bot
                 await _discordService.StartAsync();
@@ -67,6 +80,8 @@ namespace DiscordGameOverlay
                 // 8. Create viewer stream window
                 StreamWindow =
                     new StreamWindow(_messageManager);
+
+                RegisterEffectHost(StreamWindow);
 
                 OverlayControlWindow controlWindow =
                     new OverlayControlWindow(
@@ -105,6 +120,35 @@ namespace DiscordGameOverlay
             });
         }
 
+        private void OnDiscordEffectRequested(OverlayEffectType effect)
+        {
+            _effectTriggerCoordinator.Register(effect);
+        }
+
+        private void OnEffectReady(OverlayEffectRequest request)
+        {
+            Dispatcher.BeginInvoke(() =>
+            {
+                foreach (IOverlayEffectHost host in _effectHosts.ToArray())
+                {
+                    host.PlayEffect(request);
+                }
+            });
+        }
+
+        public void RegisterEffectHost(IOverlayEffectHost host)
+        {
+            if (!_effectHosts.Contains(host))
+            {
+                _effectHosts.Add(host);
+            }
+        }
+
+        public void UnregisterEffectHost(IOverlayEffectHost host)
+        {
+            _effectHosts.Remove(host);
+        }
+
         public void ExitApplication()
         {
             StreamWindow?.AllowClose();
@@ -117,9 +161,13 @@ namespace DiscordGameOverlay
             if (_discordService != null)
             {
                 _discordService.MessageReceived -= OnDiscordMessageReceived;
+                _discordService.EffectRequested -= OnDiscordEffectRequested;
 
                 await _discordService.StopAsync();
             }
+
+            _effectTriggerCoordinator.EffectReady -= OnEffectReady;
+            _effectTriggerCoordinator.Dispose();
 
             base.OnExit(e);
         }

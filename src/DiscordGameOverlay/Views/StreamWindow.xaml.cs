@@ -13,7 +13,7 @@ using DiscordGameOverlay.Services;
 
 namespace DiscordGameOverlay.Views
 {
-    public partial class StreamWindow : Window
+    public partial class StreamWindow : Window, IOverlayEffectHost
     {
         private const double LaneHeight = 46;
         private const double HorizontalPadding = 24;
@@ -21,6 +21,7 @@ namespace DiscordGameOverlay.Views
         private const int MaxPendingMessages = 100;
 
         private readonly MessageManager messageManager;
+        private readonly OverlayEffectManager overlayEffectManager;
         private readonly ProcessAudioRelayService audioRelayService;
         private readonly Queue<ChatMessage> pendingMessages = new();
         private readonly DispatcherTimer danmakuTimer;
@@ -38,6 +39,7 @@ namespace DiscordGameOverlay.Views
             InitializeComponent();
 
             messageManager = manager;
+            overlayEffectManager = new OverlayEffectManager(EffectCanvas);
             audioRelayService = new ProcessAudioRelayService();
             audioRelayService.RelayFailed += AudioRelayService_RelayFailed;
 
@@ -112,6 +114,11 @@ namespace DiscordGameOverlay.Views
             Interlocked.Increment(ref captureGeneration);
             audioRelayService.Stop();
             gameCaptureService?.StopCapture();
+        }
+
+        public void PlayEffect(OverlayEffectRequest request)
+        {
+            RunOnUiThread(() => overlayEffectManager.Play(request));
         }
 
         private void InitializeGpuCapture()

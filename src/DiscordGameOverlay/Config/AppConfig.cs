@@ -10,6 +10,18 @@ namespace DiscordGameOverlay.Config
 
         public ulong DiscordChannelId { get; set; }
 
+        public ulong PoopEmojiId { get; set; }
+            = 1546008982026584094;
+
+        public ulong PigeonPoopEmojiId { get; set; }
+            = 0;
+
+        public ulong HeartEmojiId { get; set; }
+            = 1546009038943424522;
+
+        public ulong EggEmojiId { get; set; }
+            = 1546009077107269794;
+
         public static string ConfigDirectory
         {
             get
