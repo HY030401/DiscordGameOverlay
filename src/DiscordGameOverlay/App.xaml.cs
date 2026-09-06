@@ -14,6 +14,8 @@ namespace DiscordGameOverlay
 
         public StreamWindow? StreamWindow { get; private set; }
 
+        public EffectOverlayWindow? EffectOverlayWindow { get; private set; }
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -67,6 +69,9 @@ namespace DiscordGameOverlay
                 // 8. Create viewer stream window
                 StreamWindow =
                     new StreamWindow(_messageManager);
+                
+                EffectOverlayWindow =
+                    new EffectOverlayWindow();
 
                 OverlayControlWindow controlWindow =
                     new OverlayControlWindow(
@@ -76,6 +81,7 @@ namespace DiscordGameOverlay
 
                 // 9. Show application windows
                 overlayWindow.Show();
+                EffectOverlayWindow.Show();
                 controlWindow.Show();
                 StreamWindow.Show();
             }
