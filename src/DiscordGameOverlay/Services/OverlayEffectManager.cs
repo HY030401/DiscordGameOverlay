@@ -133,9 +133,6 @@ namespace DiscordGameOverlay.Services
             double impactTop = canvas.ActualHeight - size * 0.72;
 
             Image poop = CreateImage("pigeon-poop.png", size, size);
-            var rotation = new RotateTransform(0);
-            poop.RenderTransformOrigin = new Point(0.5, 0.5);
-            poop.RenderTransform = rotation;
 
             Canvas.SetLeft(poop, left);
             Canvas.SetTop(poop, -size);
@@ -153,14 +150,6 @@ namespace DiscordGameOverlay.Services
                 FillBehavior = FillBehavior.HoldEnd
             };
 
-            var spin = new DoubleAnimation
-            {
-                From = RandomBetween(effectRandom, -20, 20),
-                To = RandomBetween(effectRandom, -540, 540),
-                Duration = fallDuration,
-                FillBehavior = FillBehavior.HoldEnd
-            };
-
             fall.Completed += (_, _) =>
             {
                 ContinueEffect(
@@ -173,7 +162,6 @@ namespace DiscordGameOverlay.Services
                     poop);
             };
 
-            rotation.BeginAnimation(RotateTransform.AngleProperty, spin);
             poop.BeginAnimation(Canvas.TopProperty, fall);
         }
 

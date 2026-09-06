@@ -14,7 +14,7 @@ namespace DiscordGameOverlay.Config
             = 1546008982026584094;
 
         public ulong PigeonPoopEmojiId { get; set; }
-            = 0;
+            = 1546035873668276234;
 
         public ulong HeartEmojiId { get; set; }
             = 1546009038943424522;
