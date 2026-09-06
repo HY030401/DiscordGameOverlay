@@ -6,7 +6,7 @@ using DiscordGameOverlay.Services;
 
 namespace DiscordGameOverlay.Views
 {
-    public partial class EffectOverlayWindow : Window
+    public partial class StreamerEffectWindow : Window
     {
         private const int GWL_EXSTYLE = -20;
 
@@ -24,14 +24,14 @@ namespace DiscordGameOverlay.Views
             int nIndex,
             int dwNewLong);
 
-        public EffectOverlayWindow()
+        public StreamerEffectWindow()
         {
             InitializeComponent();
 
-            Loaded += EffectOverlayWindow_Loaded;
+            Loaded += StreamerEffectWindow_Loaded;
         }
 
-        private void EffectOverlayWindow_Loaded(
+        private void StreamerEffectWindow_Loaded(
             object sender,
             RoutedEventArgs e)
         {
